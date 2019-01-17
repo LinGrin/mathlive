@@ -34,6 +34,7 @@ import OutputSpokenText from '../addons/outputSpokenText.js'; // eslint-disable-
 
 const HAPTIC_FEEDBACK_DURATION = 3; // in ms
 const AUDIO_FEEDBACK_VOLUME = 0.5; // from 0.0 to 1.0
+const eventHandlers = [];
 
 function on(el, selectors, listener, options) {
     selectors = selectors.split(' ');
@@ -47,8 +48,10 @@ function on(el, selectors, listener, options) {
                 options2[m[2]] = true;
             }
             el.addEventListener(m[1], listener, options2);
+            eventHandlers.push({el,  selector: m[1], listener });
         } else {
             el.addEventListener(sel, listener, options);
+            eventHandlers.push({el,  selector: sel, listener });
         }
     }
 }
@@ -287,6 +290,10 @@ MathField.prototype.$revertToOriginalContent = function() {
     delete this.virtualKeyboard;
     off(this.element, 'touchstart mousedown', this._onPointerDown.bind(this));
     off(window, 'resize', this._onResize.bind(this));
+    eventHandlers.forEach((handler) => {
+        off(handler.el, handler.selector, handler.listener);
+    });
+    eventHandlers.splice(0, eventHandlers.length);
 }
 
 
