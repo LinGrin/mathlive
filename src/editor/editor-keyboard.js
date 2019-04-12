@@ -202,8 +202,15 @@ function delegateKeyboardEvents(textarea, handlers) {
             deadKey = true;
             compositionInProgress = false;
             // This sequence seems to cancel dead keys
+            // but don't call our blur/focus handlers
+            const savedBlur = handlers.blur;
+            const savedFocus = handlers.focus;
+            handlers.blur = null;
+            handlers.focus = null;
             textarea.blur();
             textarea.focus();
+            handlers.blur = savedBlur;
+            handlers.focus = savedFocus;
         } else {
             deadKey = false;
         }
@@ -261,7 +268,18 @@ function delegateKeyboardEvents(textarea, handlers) {
         if (handlers.blur) handlers.blur();
     }
     function onFocus() {
-        if (handlers.focus) handlers.focus();
+        if (handlers.focus) {
+            // Invoking focus() can have a side effect of temporarily bluring 
+            // the text area, causing the blur handler to be invoked.
+            // Prevent this by temporarily turning it off.
+            const savedBlur = handlers.blur;
+            const savedFocus = handlers.focus;
+            handlers.blur = null;
+            handlers.focus = null;
+            savedFocus();
+            handlers.blur = savedBlur;
+            handlers.focus = savedFocus;
+        }
     }
 
     const target = textarea || handlers.container;
@@ -283,8 +301,14 @@ function delegateKeyboardEvents(textarea, handlers) {
     // with input methods or emoji input...
     target.addEventListener('input', () => { 
         if (deadKey) { 
+            const savedBlur = handlers.blur;
+            const savedFocus = handlers.focus;
+            handlers.blur = null;
+            handlers.focus = null;
             textarea.blur();
             textarea.focus();
+            handlers.blur = savedBlur;
+            handlers.focus = savedFocus;
             deadKey = false;
             compositionInProgress = false;
             defer(handleTypedText); 

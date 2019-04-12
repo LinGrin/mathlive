@@ -1490,8 +1490,17 @@ EditableMathlist.prototype.leap = function(dir, callHandler) {
     dir = dir || +1;
     dir = dir < 0 ? -1 : +1;
     callHandler = callHandler || true;
-
+    const savedSuppressChangeNotifications = this.suppressChangeNotifications;
+    this.suppressChangeNotifications = true;
     const oldPath = clone(this);
+    const oldExtent = this.extent;
+    this.move(dir);
+
+    if (this.anchor().type === 'placeholder') {
+        // If we're already at a placeholder, move by one more (the placeholder
+        // is right after the insertion point)
+        this.move(dir);
+    }
     // Candidate placeholders are atom of type 'placeholder'
     // or empty children list (except for the root: if the root is empty,
     // it is not a valid placeholder)
@@ -1499,8 +1508,11 @@ EditableMathlist.prototype.leap = function(dir, callHandler) {
         atom.type === 'placeholder' ||
         (path.length > 1 && this.siblings().length === 1), dir);
 
-    // If no placeholders were found, call handler
+    // If no placeholders were found, call handler or move to the next focusable
+    // element in the document
     if (placeholders.length === 0) {
+        // Restore the selection
+        this.setPath(oldPath, oldExtent);
         if (callHandler) {
             if (this.config.onTabOutOf) {
                 this.config.onTabOutOf(this.target, dir > 0 ? 'forward' : 'backward');
@@ -1541,9 +1553,12 @@ EditableMathlist.prototype.leap = function(dir, callHandler) {
 
 
     // Set the selection to the next placeholder
+    this.selectionWillChange();
     this.setPath(placeholders[0]);
     if (this.anchor().type === 'placeholder') this.setExtent(1);
     this._announce('move', oldPath);
+    this.selectionDidChange();
+    this.suppressChangeNotifications = savedSuppressChangeNotifications;
     return true;
 }
 

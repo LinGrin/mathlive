@@ -128,8 +128,8 @@ function MathField(element, config) {
             </span>`;
         } else {
             markup += '<span class="ML__textarea">' +
-                '<textarea class="ML__textarea--textarea" autocapitalize="off" autocomplete="off" ' +
-                'autocorrect="off" spellcheck="false" aria-hidden="true" tabindex="-1">' +
+                '<textarea class="ML__textarea__textarea" autocapitalize="off" autocomplete="off" ' +
+                'autocorrect="off" spellcheck="false" aria-hidden="true" tabindex="0">' +
                 '</textarea>' +
             '</span>';
         }
