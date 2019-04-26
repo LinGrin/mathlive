@@ -1493,8 +1493,6 @@ EditableMathlist.prototype.leap = function(dir, callHandler) {
     const savedSuppressChangeNotifications = this.suppressChangeNotifications;
     this.suppressChangeNotifications = true;
     const oldPath = clone(this);
-<<<<<<< HEAD
-=======
     const oldExtent = this.extent;
     this.move(dir);
 
@@ -1503,7 +1501,6 @@ EditableMathlist.prototype.leap = function(dir, callHandler) {
         // is right after the insertion point)
         this.move(dir);
     }
->>>>>>> 7bd6afa... Fix #169: handle focus and blur events correctly
     // Candidate placeholders are atom of type 'placeholder'
     // or empty children list (except for the root: if the root is empty,
     // it is not a valid placeholder)
