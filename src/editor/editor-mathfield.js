@@ -121,9 +121,9 @@ function MathField(element, config) {
             // On Android or iOS, don't use a textarea, which has the side effect of
             // bringing up the OS virtual keyboard
             markup += `<span class='ML__textarea'>
-                <span class='ML__textarea--textarea'
+                <span class='ML__textarea__textarea'
                     tabindex="0" role="textbox"
-                    style='display:inline-block;height:1px;width:1px' >
+                    style='display:inline-block;height:1px;width:1px;cursor:pointer' >
                 </span>
             </span>`;
         } else {
@@ -2201,7 +2201,11 @@ MathField.prototype.$focus = function() {
     if (!this.hasFocus()) {
         // The textarea may be a span (on mobile, for example), so check that
         // it has a select() before calling it.
-        if (this.textarea.select) this.textarea.select();
+        if (this.textarea.select) {
+            this.textarea.select();
+        } else {
+            this.textarea.focus()
+        }
         _onAnnounce(this, 'line');
         this._render();
     }
