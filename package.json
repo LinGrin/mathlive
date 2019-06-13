@@ -46,7 +46,7 @@
     "watch-docs": "chokidar 'src/*.js' 'tutorials/*.md' 'examples/*.md' -c 'npm run docs -s'",
     "prerollup": "echo '\\033[0;32mRollup...\\033[0m'",
     "rollup": "rollup --config",
-    "dist": "npm run clean -s && npm run build -s && postcss build/*.css -d dist && npm run -s rollup && cpx \"src/**\" dist/src"
+    "dist": "npm run clean -s && npm run build -s && postcss build/*.css -d dist && npm run -s rollup && cpx \"src/**\" dist/src && babel dist/mathlive.mjs -o dist/mathlive-es5.mjs"
   },
   "nyc": {
     "exclude": [
